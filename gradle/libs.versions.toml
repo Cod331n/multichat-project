@@ -1,0 +1,32 @@
+[versions]
+shadow = "8.3.8"
+
+jackson = "2.20.1"
+lombok = "1.18.34"
+jetbrains-annotations = "24.0.1"
+spigot-annotations = "1.2.3-SNAPSHOT"
+
+kafka = "3.0.0"
+
+bukkit-api = "1.9.4"
+diamondpaper = "1.2.63"
+spigot-api = "1.20.5-R0.1-SNAPSHOT"
+luckperms-api = "5.5"
+telegrambots = "6.9.7.1"
+
+[libraries]
+jackson = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
+spigot-annotations = { module = "org.spigotmc:plugin-annotations", version.ref = "spigot-annotations"}
+
+kafka = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka" }
+
+bukkit-api = { module = "ru.cristalix.core:bukkit-api", version.ref = "bukkit-api" }
+diamondpaper = { module = "gg.cristalix:diamondpaper", version.ref = "diamondpaper" }
+spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api" }
+luckperms-api = { module = "net.luckperms:api", version.ref = "luckperms-api" }
+telegrambots = { module = "org.telegram:telegrambots", version.ref = "telegrambots" }
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
