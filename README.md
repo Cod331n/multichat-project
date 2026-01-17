@@ -1,4 +1,4 @@
-# Multichat-project - кросс-серверный чат для проекта Cristalix
+# Multichat-project - кросс-серверный чат
 
 ## Описание
 
