@@ -14,11 +14,11 @@ import org.bukkit.plugin.java.annotation.plugin.author.Authors;
 import org.jetbrains.annotations.NotNull;
 import ru.geoderma.multichat.command.ChatsCommand;
 import ru.geoderma.multichat.config.ConfigManager;
+import ru.geoderma.multichat.core.messaging.kafka.KafkaClientBootstrap;
 import ru.geoderma.multichat.core.messaging.kafka.KafkaMessageConsumer;
-import ru.geoderma.multichat.core.messaging.kafka.KafkaMessageConsumerFactory;
 import ru.geoderma.multichat.core.messaging.kafka.KafkaMessageProducer;
-import ru.geoderma.multichat.core.messaging.kafka.KafkaMessageProducerFactory;
 import ru.geoderma.multichat.core.model.BridgeMessage;
+import ru.geoderma.multichat.core.model.Source;
 import ru.geoderma.multichat.listener.PlayerChatListener;
 import ru.geoderma.multichat.listener.PlayerJoinListener;
 import ru.geoderma.multichat.listener.PlayerQuitListener;
@@ -40,9 +40,13 @@ public class MultichatPlugin extends JavaPlugin {
     public void onEnable() {
         configManager = new ConfigManager(this);
 
-        this.producer = KafkaMessageProducerFactory.forMinecraft1_12_2(configManager.getKafkaBootstrapServers());
-        this.consumer = KafkaMessageConsumerFactory.forMinecraft1_12_2(configManager.getKafkaBootstrapServers(), this::handleIncomingMessage);
-        consumer.start();
+        KafkaClientBootstrap.BootstrapResponse response = KafkaClientBootstrap.bootstrap(
+                Source.MINECRAFT_1_12_2,
+                configManager.getKafkaBootstrapServers(),
+                this::handleIncomingMessage
+        );
+        this.producer = response.getProducer();
+        this.consumer = response.getConsumer();
 
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerChatListener(producer), this);
@@ -51,12 +55,13 @@ public class MultichatPlugin extends JavaPlugin {
 
         registerCommand("chats", new ChatsCommand(this));
 
-        producer.sendSystem("\uD83E\uDEAB Билдсервер запущен!", null);
+        producer.sendDirectMessage(Source.MINECRAFT_1_12_2, Source.TELEGRAM, "",
+                "\uD83E\uDEAB Билдсервер запущен!", null);
     }
 
     @Override
     public void onDisable() {
-        producer.sendSystem(
+        producer.sendDirectMessage(Source.MINECRAFT_1_12_2, Source.TELEGRAM, "",
                 "\uD83E\uDEAB Билдсервер выключен!",
                 null);
 

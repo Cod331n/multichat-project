@@ -6,21 +6,21 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.geoderma.multichat.config.BotConfig;
+import ru.geoderma.multichat.core.messaging.kafka.KafkaClientBootstrap;
 import ru.geoderma.multichat.core.messaging.kafka.KafkaMessageConsumer;
-import ru.geoderma.multichat.core.messaging.kafka.KafkaMessageConsumerFactory;
 import ru.geoderma.multichat.core.messaging.kafka.KafkaMessageProducer;
-import ru.geoderma.multichat.core.messaging.kafka.KafkaMessageProducerFactory;
 import ru.geoderma.multichat.core.model.BridgeMessage;
 import ru.geoderma.multichat.core.model.Source;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class TelegramBot extends MultichatTelegramBot {
 
-    private final KafkaMessageProducer kafkaProducer;
+    private final KafkaMessageProducer producer;
 
-    private final KafkaMessageConsumer kafkaConsumer;
+    private final KafkaMessageConsumer consumer;
 
     private final Predicate<Update> isText = update -> update.hasMessage() && update.getMessage().hasText();
 
@@ -36,14 +36,17 @@ public class TelegramBot extends MultichatTelegramBot {
 
         String bootstrapServers = BotConfig.getKafkaBootstrapServers();
 
-        this.kafkaProducer = KafkaMessageProducerFactory.forTelegram(bootstrapServers);
-        this.kafkaConsumer = KafkaMessageConsumerFactory.forTelegram(bootstrapServers, this::handleIncomingMessage);
+        KafkaClientBootstrap.BootstrapResponse response = KafkaClientBootstrap.bootstrap(
+                Source.TELEGRAM,
+                bootstrapServers,
+                this::handleIncomingMessage
+        );
+        this.producer = response.getProducer();
+        this.consumer = response.getConsumer();
     }
 
     @Override
     public void onStart() {
-        kafkaConsumer.start();
-
         telegramThreads.forEach(thread -> {
             sendMessage("\uD83D\uDD0B Телеграм бот включен!", thread);
         });
@@ -51,7 +54,7 @@ public class TelegramBot extends MultichatTelegramBot {
 
     @Override
     public void onStop() {
-        this.kafkaConsumer.stop();
+        this.consumer.stop();
 
         telegramThreads.forEach(thread -> {
             sendMessage("\uD83E\uDEAB Телеграм бот выключен!", thread);
@@ -68,7 +71,7 @@ public class TelegramBot extends MultichatTelegramBot {
             if (isGlobalMessage.test(messageText)) {
                 String userName = message.getFrom().getUserName();
 
-                kafkaProducer.sendFromTelegram("@" + userName, messageText, null);
+                producer.sendFromTelegram("@" + userName, messageText, null);
             }
         }
     }
@@ -81,19 +84,31 @@ public class TelegramBot extends MultichatTelegramBot {
         String formatted;
 
         switch (message.getSource()) {
-            case MINECRAFT_1_12_2 -> formatted = String.format("%s | %s (%s) » %s",
-                    message.getMetadata().get("group_prefix"),
-                    message.getAuthor(),
-                    message.getMetadata().get("world_name"),
-                    message.getContent());
+            case MINECRAFT_1_12_2 -> {
+                if (!message.isPrivate()) {
+                    formatted = String.format("%s | %s (%s) » %s",
+                            message.getMetadata().get("group_prefix"),
+                            message.getAuthor(),
+                            message.getMetadata().get("world_name"),
+                            message.getContent());
+                } else {
+                    formatted = message.getContent();
+                }
+            }
 
-            case MINECRAFT_1_20_5 -> formatted = String.format("%s%s (%s) » %s",
-                    message.getMetadata().get("group_prefix").isBlank()
-                            ? ""
-                            : message.getMetadata().get("group_prefix") + " | ",
-                    message.getAuthor(),
-                    message.getMetadata().get("world_name"),
-                    message.getContent());
+            case MINECRAFT_1_20_5 -> {
+                if (!message.isPrivate()) {
+                    formatted = String.format("%s%s (%s) » %s",
+                            message.getMetadata().get("group_prefix").isBlank()
+                                    ? ""
+                                    : message.getMetadata().get("group_prefix") + " | ",
+                            message.getAuthor(),
+                            message.getMetadata().get("world_name"),
+                            message.getContent());
+                } else {
+                    formatted = message.getContent();
+                }
+            }
 
             default -> formatted = message.getContent();
         }

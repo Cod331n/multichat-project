@@ -38,7 +38,7 @@ public class PlayerQuitListener implements Listener {
             meta.put("minecraft_message", minecraftFormatted);
             meta.put("sent_from", Source.MINECRAFT_1_12_2.getVersion());
 
-            producer.sendSystem(rawMessage, meta);
+            producer.sendDirectMessage(Source.MINECRAFT_1_12_2, Source.TELEGRAM, "", rawMessage, meta);
         }).exceptionally(e -> {
             String rawMessage = String.format("\uD83D\uDCD7 Игрок %s вышел с билдсервера", player.getName());
             String minecraftFormatted = String.format("Игрок §e%s §fвышел с билдсервера", player.getName());
@@ -47,7 +47,7 @@ public class PlayerQuitListener implements Listener {
             meta.put("minecraft_message", minecraftFormatted);
             meta.put("sent_from", Source.MINECRAFT_1_12_2.getVersion());
 
-            producer.sendSystem(rawMessage, meta);
+            producer.sendDirectMessage(Source.MINECRAFT_1_12_2, Source.TELEGRAM, "", rawMessage, meta);
 
             return null;
         });

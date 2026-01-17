@@ -25,6 +25,10 @@ public final class BridgeMessage {
     @JsonProperty("source")
     private Source source;
 
+    @Builder.Default
+    @JsonProperty("isPrivate")
+    private boolean isPrivate = false;
+
     @JsonProperty("author")
     private String author;
 

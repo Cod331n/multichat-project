@@ -94,8 +94,8 @@ public class ChatsCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (IPermissionService.get().getBestGroup(player.getUniqueId()).join() != StaffGroups.CUR_BUILDER) {
-            sender.sendMessage(ChatColor.RED + "Только Куратор Строителей может использовать эту команду");
+        if (IPermissionService.get().getBestGroup(player.getUniqueId()).join().isInRangeOf(StaffGroups.CUR_BUILDER, StaffGroups.OWNER)) {
+            sender.sendMessage(ChatColor.RED + "Вы не можете использовать эту команду");
             return;
         }
 

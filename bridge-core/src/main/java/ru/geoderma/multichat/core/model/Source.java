@@ -8,13 +8,13 @@ import org.jetbrains.annotations.Nullable;
 @RequiredArgsConstructor
 public enum Source {
 
-    MINECRAFT_1_12_2("minecraft-1-12-2", "1_12_2"),
+    MINECRAFT_1_12_2("minecraft-1-12-2", "1_12_2", true),
 
-    MINECRAFT_1_20_5("minecraft-1-20-5", "1_20_5"),
+    MINECRAFT_1_20_5("minecraft-1-20-5", "1_20_5", true),
 
-    TELEGRAM("telegram", null),
+    TELEGRAM("telegram", null, true),
 
-    SYSTEM("system", null);
+    SYSTEM("system", null, false);
 
     @Getter
     @NotNull
@@ -23,5 +23,13 @@ public enum Source {
     @Getter
     @Nullable
     private final String version;
+
+    @Getter
+    private final boolean hasPrivateTopic;
+
+    @NotNull
+    public String getPrivateTopic() {
+        return topicName + "-private";
+    }
 
 }

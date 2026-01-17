@@ -2,11 +2,19 @@ package ru.geoderma.multichat.core.messaging.kafka;
 
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.jetbrains.annotations.NotNull;
+import ru.geoderma.multichat.core.model.Source;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public final class KafkaStaticConfig {
 

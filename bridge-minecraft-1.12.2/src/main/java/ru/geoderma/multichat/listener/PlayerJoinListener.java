@@ -38,7 +38,7 @@ public class PlayerJoinListener implements Listener {
             meta.put("minecraft_message", minecraftFormatted);
             meta.put("sent_from", Source.MINECRAFT_1_12_2.getVersion());
 
-            producer.sendSystem(rawMessage, meta);
+            producer.sendDirectMessage(Source.MINECRAFT_1_12_2, Source.TELEGRAM, "", rawMessage, meta);
         }).exceptionally(ex -> {
             String rawMessage = String.format("\uD83D\uDCD7 %s зашёл на билдсервер", player.getName());
             String minecraftFormatted = String.format("§e%s §fзашёл на билдсервер", player.getName());
@@ -47,7 +47,7 @@ public class PlayerJoinListener implements Listener {
             meta.put("minecraft_message", minecraftFormatted);
             meta.put("sent_from", Source.MINECRAFT_1_12_2.getVersion());
 
-            producer.sendSystem(rawMessage, meta);
+            producer.sendDirectMessage(Source.MINECRAFT_1_12_2, Source.TELEGRAM, "", rawMessage, meta);
 
             return null;
         });

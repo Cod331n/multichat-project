@@ -43,8 +43,7 @@ public class PlayerQuitListener implements Listener {
                     player.getName());
         }
 
-        producer.sendSystem(rawMessage, Map.of("minecraft_message", minecraftFormatted,
-                "sent_from", Source.MINECRAFT_1_20_5.getVersion()));
+        producer.sendDirectMessage(Source.MINECRAFT_1_20_5, Source.TELEGRAM, "", rawMessage, null);
     }
 
 }
