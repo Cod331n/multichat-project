@@ -11,12 +11,6 @@
 
 Система построена с использованием Apache Kafka в качестве шины сообщений.
 
-Топики Kafka описаны в enum Source:
-- minecraft-1-12-2
-- minecraft-1-20-5
-- telegram
-- system
-
 Каждый сервер слушает свой топик.
 Когда на него приходит сообщение, он форматирует его в соответствии с источником передачи и отправляет в чат.
 
@@ -84,21 +78,4 @@ chmod +x start.sh
 
 ```shell
 ./start.sh
-```
-### 7. Подождать запуск сервера
-
-Когда сервер запустится (и в логах нет ошибок), создать топики:
-```shell
-./bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --topic minecraft-1-12-2 --partitions 1 --replication-factor 1
-
-./bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --topic minecraft-1-20-5 --partitions 1 --replication-factor 1
-
-./bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --topic telegram --partitions 1 --replication-factor 1
-
-./bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --topic system --partitions 1 --replication-factor 1
-```
-### 8. Проверить топики
-
-```shell
-./bin/kafka-topics.sh --list --bootstrap-server localhost:9092
 ```
